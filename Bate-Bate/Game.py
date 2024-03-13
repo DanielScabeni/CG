@@ -2,18 +2,6 @@ import pygame
 import sys
 from MecMovimento import MovendoTexto
 
-class Game:
-    def __init__(self):
-        pygame.init()
-        self.largura = 800
-        self.altura = 600
-        self.tela = pygame.display.set_mode((self.largura, self.altura))
-        pygame.display.set_caption("Bate-Bate")
-        self.clock = pygame.time.Clock()
-        self.MovendoTexto = MovendoTexto("Movendo Texto", 50, self.largura, self.altura)
-
-        self.rodando = True
-        self.fonte = pygame.font.SysFont(None, 48)
 
 class Game:
     def __init__(self):
@@ -25,23 +13,18 @@ class Game:
         self.clock = pygame.time.Clock()
         self.MovendoTexto = MovendoTexto("Movendo Texto", 50, self.largura, self.altura)
 
-        self.rodando = True
-        self.fonte = pygame.font.SysFont(None, 48)
-
-    def.run(self):
+    def run(self):
         rodando = True
-        while self.rodando:
+        while rodando:
             for evento in pygame.event.get():
                 if evento.type == pygame.QUIT:
-                    self.rodando = False
-            
+                    rodando = False
+
             self.MovendoTexto.move()
             self.tela.fill((0, 0, 0))
             self.tela.blit(self.MovendoTexto.texto_surf, self.MovendoTexto.rect)
             pygame.display.flip()
             self.clock.tick(60)
 
-    def eventos(self):
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                self.rodando = False
+        pygame.quit()
+        sys.exit()
