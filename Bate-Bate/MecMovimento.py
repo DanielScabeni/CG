@@ -23,25 +23,25 @@ class MovendoTexto:
         self.rect.x += self.velocidade_x
         self.rect.y += self.velocidade_y #Move o retângulo rect de acordo com as velocidades X e Y.
 
-        if self.rect.left <= 0: 
-            self.velocidade_x = random.randint(0, 1)
-            self.velocidade_y = random.randint(-1, 1)
-            self.change_color()
+        if self.rect.left <= 0: # Verifica se o canto esquerdo do texto está na posição 0 ou à esquerda dela (fora da tela).
+            self.velocidade_x = random.randint(0, 1) # Define aleatoriamente uma velocidade horizontal do texto, garantindo que não seja menor q 0 horizontalmente (à esquerda dela)
+            self.velocidade_y = random.randint(-1, 1) # Define aleatoriamente uma velocidade vertical 
+            self.change_color() # Altera a cor usando a função de aleatorizar a mesmam
 
         if self.rect.right >= self.largura:
-            self.velocidade_x = random.randint(-1, 0)
-            self.velocidade_y = random.randint(-1, 1)
-            self.change_color()
+            self.velocidade_x = random.randint(-1, 0) # # Define aleatoriamente uma velocidade horizontal e impede que va para fora da tela
+            self.velocidade_y = random.randint(-1, 1) # Define aleatoriamente uma velocidade vertical 
+            self.change_color() # Altera a cor usando a função de aleatorizar a mesmam
 
         if self.rect.top <= 0:
-            self.velocidade_x = random.randint(-1, 1)
-            self.velocidade_y = random.randint(0, 1)
-            self.change_color()
+            self.velocidade_x = random.randint(-1, 1) # Define aleatoriamente uma velocidade horizontal
+            self.velocidade_y = random.randint(0, 1) # Define aleatoriamente uma velocidade vertical e impede que va para fora da tela
+            self.change_color() # Altera a cor usando a função de aleatorizar a mesmam
 
         if self.rect.bottom >= self.altura:
-            self.velocidade_x = random.randint(-1, 1)
-            self.velocidade_y = random.randint(-1, 0)
-            self.change_color()
+            self.velocidade_x = random.randint(-1, 1) # Define aleatoriamente uma velocidade horizontal
+            self.velocidade_y = random.randint(-1, 0) # Define aleatoriamente uma velocidade vertical e impede que va para fora da tela
+            self.change_color() # Altera a cor usando a função de aleatorizar a mesmam
 
     def change_color(self): # Função que altera a cor do texto.
         cor_texto = (
