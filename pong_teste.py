@@ -1,5 +1,6 @@
 import sys
 import pygame
+import random
 
 # Inicialização do Pygame
 pygame.init()
@@ -15,20 +16,20 @@ PRETO = (0, 0, 0)
 BRANCO = (255, 255, 255)
 
 # Variáveis da bola
-tamanho_bola = 20
+tamanho_bola = 10
 bola_x = largura // 2
 bola_y = altura // 2
 velocidade_bola_x = 0.1
 velocidade_bola_y = 0.1
 
 # Variáveis das barras
-largura_barra = 5
-altura_barra = 150
+largura_barra = 10
+altura_barra = 60
 barra1_x = 50
 barra1_y = altura // 4 - altura_barra // 4
 barra2_x = largura - 50 - largura_barra
 barra2_y = altura // 2 - altura_barra // 2
-velocidade_barra = 0.3
+velocidade_barra = 0.2
 
 # Loop principal do jogo
 while True:
@@ -47,6 +48,21 @@ while True:
         barra2_y -= velocidade_barra
     if teclas[pygame.K_DOWN]:
         barra2_y += velocidade_barra
+
+    # movimentar barras automaticamente
+    if bola_x <= largura/2: #and velocidade_bola_x < 0:
+        if barra1_y <= bola_y:
+            barra1_y += velocidade_barra
+        else:
+            barra1_y -= velocidade_barra
+    
+    if bola_x >= largura/2:
+        if barra2_y >= bola_y: #and velocidade_bola_x > 0:
+            barra2_y -= velocidade_barra
+        else:
+            barra2_y += velocidade_barra
+
+    
 
     # Movimento da bola
     bola_x += velocidade_bola_x
