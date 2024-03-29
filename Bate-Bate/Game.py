@@ -24,7 +24,7 @@ class Game:
             self.tela.fill((0, 0, 0)) # preenche a tela com a cor preta
             self.tela.blit(self.MovendoTexto.texto_surf, self.MovendoTexto.rect) # Desenha o texto movel na tela
             pygame.display.flip() # atualiza a tela
-            self.clock.tick(60) # controla a taxa de atualização da tela
+            self.s # controla a taxa de atualização da tela
 
         pygame.quit() # finaliza o pygame quando sai do loop
         sys.exit() # encerra o script
