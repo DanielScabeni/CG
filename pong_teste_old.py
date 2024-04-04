@@ -17,7 +17,7 @@ PRETO = (0, 0, 0)
 BRANCO = (255, 255, 255)
 
 # Variáveis de Velocidade 
-vel_geral = 3
+vel_geral = 0.1
 Vel_incremental = 1.1
 
 # Variáveis da bola
@@ -40,29 +40,12 @@ velocidade_barra = vel_geral
 seguir_bola_barra1 = True
 seguir_bola_barra2 = True
 
-# Score dos 2 players
-scoreP1 = 0
-scoreP2 = 0
-
-# Define a fonte para desenhar o texto dos pontos
-fonte = pygame.font.Font(None, 10)
-
 # Loop principal do jogo
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
-        
-    # Renderiza o texto dos pontos
-    texto_scoreP1 = fonte.render("Score", True, BRANCO)
-    # texto_scoreP2 = fonte.render(f("{scoreP2}"), True, BRANCO)
-    scoreP1_rect = texto_scoreP1.get_rect(center=(largura // 2, altura // 2))
-    # scoreP2_rect = texto_scoreP2.get_rect(center=(largura - 100, altura + 100)) 
-    
-    # Posiciona e desenha o texto dos pontos na tela
-    tela.blit(texto_scoreP1, scoreP1_rect)
-    # tela.blit(texto_scoreP2, scoreP2_rect)
 
     # Movimento das barras
     teclas = pygame.key.get_pressed()
@@ -119,10 +102,6 @@ while True:
 
     # Verifica colisão com as bordas horizontais
     if bola_x <= 0 or bola_x >= largura - tamanho_bola:
-        if bola_x <= 0:
-            scoreP1 += 1  # Jogador 1 marca um ponto
-        elif bola_x >= largura - tamanho_bola:
-            scoreP2 += 1  # Jogador 2 marca um ponto
         bola_x = largura // 2   
         bola_y = altura // 2
         velocidade_bola_x = vel_geral
@@ -156,10 +135,5 @@ while True:
     # Desenhar a bola
     pygame.draw.circle(tela, BRANCO, (bola_x, bola_y), tamanho_bola // 2)
 
-    # Desenhar linha do meio
-    pygame.draw.aaline(tela, BRANCO, (largura //2, 0), (largura //2, altura))
-
     # Atualizar a tela
     pygame.display.flip()
-    
-    clock.tick(60)

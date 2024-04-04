@@ -33,6 +33,10 @@ bola_y = altura // 2 - tamanho_bola // 2
 raquete_player_1_dy = 5
 raquete_pc_dy = 5
 
+# velocidade da bola
+velocidade_bola_x = 3
+velocidade_bola_y = 3
+
 clock = pygame.time.Clock()
 
 
@@ -44,11 +48,51 @@ while rodando:
 
     screen.fill(PRETO)
 
+    # Movendo a bola
+    bola_x += velocidade_bola_x
+    bola_y += velocidade_bola_y
+
+    # Retângulos de Colisão
+    bola_rect = pygame.Rect(bola_x, bola_y, tamanho_bola, tamanho_bola)
+    raquete_pc_rect = pygame.Rect(pc_x, pc_y, raquete_largura, raquete_altura)
+    raquete_player_1_rect = pygame.Rect(
+        player_1_x, player_1_y, raquete_largura, raquete_altura
+    )
+
+    # Colisão da bola com a raquete do pc e a raquete do player
+    if bola_rect.colliderect(raquete_pc_rect) or bola_rect.colliderect(
+        raquete_player_1_rect
+    ):
+        velocidade_bola_x = -velocidade_bola_x
+
+    # Colisão da bola com as bordas da tela
+    if bola_y <= 0 or bola_y >= altura - tamanho_bola:
+        velocidade_bola_y = -velocidade_bola_y
+
+    # Posicionar a bola no inicio do jogo
+    if bola_x <= 0 or bola_x >= largura - tamanho_bola:
+        bola_x = largura // 2 - tamanho_bola // 2
+        bola_y = altura // 2 - tamanho_bola // 2
+        velocidade_bola_x = -velocidade_bola_x
+
+    # Movendo a raquete do pc pra seguir a bola
+    if pc_y + raquete_altura // 2 < bola_y:
+        pc_y += raquete_pc_dy
+    elif pc_y + raquete_altura // 2 > bola_y:
+        pc_y -= raquete_pc_dy
+
+    # Evitar que a raquete do pc saia da área
+    if pc_y < 0:
+        pc_y = 0
+    elif pc_y > altura - raquete_altura:
+        pc_y = altura - raquete_altura
+
     pygame.draw.rect(screen, BRANCO, (pc_x, pc_y, raquete_largura, raquete_altura))
     pygame.draw.rect(
         screen, BRANCO, (player_1_x, player_1_y, raquete_largura, raquete_altura)
     )
     pygame.draw.ellipse(screen, BRANCO, (bola_x, bola_y, tamanho_bola, tamanho_bola))
+    pygame.draw.aaline(screen, BRANCO, (largura //2, 0), (largura //2, altura))
 
     keys = pygame.key.get_pressed()
 
@@ -59,10 +103,7 @@ while rodando:
 
     pygame.display.flip()
 
-    clock.tick(120)
+    clock.tick(60)
 
 pygame.quit()
 sys.exit()
-
-
-
