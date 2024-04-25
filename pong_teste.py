@@ -17,7 +17,7 @@ PRETO = (0, 0, 0)
 BRANCO = (255, 255, 255)
 
 # Variáveis de Velocidade 
-vel_geral = 3
+vel_geral = 2
 Vel_incremental = 1.1
 
 # Variáveis da bola
@@ -45,7 +45,7 @@ scoreP1 = 0
 scoreP2 = 0
 
 # Define a fonte para desenhar o texto dos pontos
-fonte = pygame.font.Font(None, 10)
+fonte = pygame.font.Font(None, 30)
 
 # Loop principal do jogo
 while True:
@@ -54,15 +54,18 @@ while True:
             pygame.quit()
             sys.exit()
         
+    # Preencher a tela com a cor preta
+    tela.fill(PRETO)
+
     # Renderiza o texto dos pontos
-    texto_scoreP1 = fonte.render("Score", True, BRANCO)
-    # texto_scoreP2 = fonte.render(f("{scoreP2}"), True, BRANCO)
-    scoreP1_rect = texto_scoreP1.get_rect(center=(largura // 2, altura // 2))
-    # scoreP2_rect = texto_scoreP2.get_rect(center=(largura - 100, altura + 100)) 
+    texto_scoreP1 = fonte.render(f"Score: {scoreP1}", True, BRANCO)
+    texto_scoreP2 = fonte.render(f"Score: {scoreP2}", True, BRANCO)
+    scoreP1_rect = texto_scoreP1.get_rect(center=(250, 20))
+    scoreP2_rect = texto_scoreP2.get_rect(center=(largura - 250, 20)) 
     
     # Posiciona e desenha o texto dos pontos na tela
     tela.blit(texto_scoreP1, scoreP1_rect)
-    # tela.blit(texto_scoreP2, scoreP2_rect)
+    tela.blit(texto_scoreP2, scoreP2_rect)
 
     # Movimento das barras
     teclas = pygame.key.get_pressed()
@@ -141,13 +144,10 @@ while True:
 
     # Deixar a bola e as barras lentas quando uma das barras deixar a bola passar
     if bola_x < barra1_x - largura_barra or bola_x > largura - barra1_x + largura_barra:
-        clock.tick(1)
-        #velocidade_bola_x = vel_geral / 3
-        #velocidade_bola_y = vel_geral / 3
-        #velocidade_barra = vel_geral / 3
-
-    # Preencher a tela com a cor preta
-    tela.fill(PRETO)
+        #clock.tick(1)
+        velocidade_bola_x = vel_geral / 3
+        velocidade_bola_y = vel_geral / 3
+        velocidade_barra = vel_geral / 3
 
     # Desenhar as barras
     pygame.draw.rect(tela, BRANCO, (barra1_x, barra1_y - altura_barra // 2, largura_barra, altura_barra))
