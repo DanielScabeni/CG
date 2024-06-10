@@ -4,8 +4,10 @@ import random
 
 pygame.init()
 
+# Definição de cores
 PRETO = (0, 0, 0)
 BRANCO = (255, 255, 255)
+cor_bola = BRANCO
 
 largura = 800
 altura = 600
@@ -22,10 +24,10 @@ tamanho_bola = 10
 raquete_player_1_dy = 5
 raquete_pc_dy = 5
 
-# velocidade geral
+# Velocidade geral
 velocidade_geral = 3
 
-# velocidade da bola
+# Velocidade da bola
 velocidade_bola_x = velocidade_geral
 velocidade_bola_y = velocidade_geral
 
@@ -42,6 +44,9 @@ font = pygame.font.Font(font_file, 36)
 
 clock = pygame.time.Clock()
 
+# Opacidade inicial
+opacidade_bola = 255
+start_ticks = pygame.time.get_ticks()  # Tempo inicial
 
 def menu_principal():
     global rodando, controle
@@ -61,7 +66,6 @@ def menu_principal():
         screen.blit(texto_menu, text_menu_rect)
 
         tempo = pygame.time.get_ticks()
-        print(tempo)
         # Pressione Space para jogar
         if tempo % 2000 < 1000:
             texto_iniciar = font.render("Pressione Espaço", True, BRANCO)
@@ -73,7 +77,7 @@ def menu_principal():
 
 
 def posicao_inicial():
-    global pc_x, pc_y, player_1_x, player_1_y, bola_x, bola_y, score_pc, score_player_1, velocidade_bola_x, velocidade_bola_y
+    global pc_x, pc_y, player_1_x, player_1_y, bola_x, bola_y, score_pc, score_player_1, velocidade_bola_x, velocidade_bola_y, cor_bola, opacidade_bola
 
     # Posição da Raquete do pc
     pc_x = 10
@@ -91,8 +95,13 @@ def posicao_inicial():
     score_player_1 = 0
     score_pc = 0
 
-    # Definir velocidade inicial aleatória para a bola
+    # Define a cor inicial e opacidade da bola
+    cor_bola = BRANCO
+    opacidade_bola = 255
+
+    # Define a velocidade inicial da bola
     alterar_direcao_bola('')
+
 
 def fim_jogo():
     global rodando, vencedor, controle
@@ -116,12 +125,9 @@ def fim_jogo():
 
 
 def alterar_direcao_bola(eixo):
-    global velocidade_bola_x, velocidade_bola_y
-    if velocidade_bola_x == 0:
-        velocidade_bola_x = velocidade_geral
-    elif velocidade_bola_y == 0:
-        velocidade_bola_y = velocidade_geral
+    global velocidade_bola_x, velocidade_bola_y, cor_bola
 
+    # Mudança de direção e cor da bola
     if eixo == 'x':
         velocidade_bola_x = velocidade_bola_x * -1
         velocidade_bola_y = velocidade_bola_y * random.choice([1, -1])
@@ -131,8 +137,10 @@ def alterar_direcao_bola(eixo):
     else:
         velocidade_bola_x = velocidade_bola_x * random.choice([1, -1])
         velocidade_bola_y = velocidade_bola_y * random.choice([1, -1])
-    print(f'v_bola ',velocidade_bola_x, velocidade_bola_y)
-    print(f'random: ',random.choice([1, -1]))
+
+    # Mudar a cor da bola aleatoriamente
+    cor_bola = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
+
 
 menu_principal()
 posicao_inicial()
@@ -150,6 +158,18 @@ while rodando:
         # Movendo a bola
         bola_x += velocidade_bola_x
         bola_y += velocidade_bola_y
+
+        # Incremento na velocidade a cada 10 segundos
+        segundos = (pygame.time.get_ticks() - start_ticks) / 1000
+        if segundos > 10:
+            velocidade_geral += 0.1
+            velocidade_bola_x += 0.1 if velocidade_bola_x > 0 else -0.1
+            velocidade_bola_y += 0.1 if velocidade_bola_y > 0 else -0.1
+            start_ticks = pygame.time.get_ticks()  
+
+        # Diminuição da opacidade da bola
+        opacidade_bola = max(0, opacidade_bola - 0.1)
+        bola_cor_transparente = (cor_bola[0], cor_bola[1], cor_bola[2], int(opacidade_bola))
 
         # Retângulos de Colisão
         bola_rect = pygame.Rect(bola_x, bola_y, tamanho_bola, tamanho_bola)
@@ -217,9 +237,14 @@ while rodando:
         pygame.draw.rect(
             screen, BRANCO, (player_1_x, player_1_y, raquete_largura, raquete_altura)
         )
+        
+        # Criar uma superfície para a bola com transparência
+        bola_surface = pygame.Surface((tamanho_bola, tamanho_bola), pygame.SRCALPHA)
         pygame.draw.ellipse(
-            screen, BRANCO, (bola_x, bola_y, tamanho_bola, tamanho_bola)
+            bola_surface, bola_cor_transparente, (0, 0, tamanho_bola, tamanho_bola)
         )
+        screen.blit(bola_surface, (bola_x, bola_y))
+        
         pygame.draw.aaline(screen, BRANCO, (largura // 2, 0), (largura // 2, altura))
 
         # Controle Teclado do Player_1
