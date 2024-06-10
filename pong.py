@@ -1,5 +1,6 @@
 import pygame
 import sys
+import random
 
 pygame.init()
 
@@ -21,9 +22,12 @@ tamanho_bola = 10
 raquete_player_1_dy = 5
 raquete_pc_dy = 5
 
+# velocidade geral
+velocidade_geral = 3
+
 # velocidade da bola
-velocidade_bola_x = 3
-velocidade_bola_y = 3
+velocidade_bola_x = velocidade_geral
+velocidade_bola_y = velocidade_geral
 
 # Definir Vencedor
 vencedor = ""
@@ -60,7 +64,7 @@ def menu_principal():
         print(tempo)
         # Pressione Space para jogar
         if tempo % 2000 < 1000:
-            texto_iniciar = font.render("Pressione Espaço", True, BRANCO)
+            texto_iniciar = font.render("Pressione Espaço", True, BRANCO)
             texto_iniciar_rect = texto_iniciar.get_rect(center=(largura // 2, 450))
             screen.blit(texto_iniciar, texto_iniciar_rect)
 
@@ -69,7 +73,7 @@ def menu_principal():
 
 
 def posicao_inicial():
-    global pc_x, pc_y, player_1_x, player_1_y, bola_x, bola_y, score_pc, score_player_1
+    global pc_x, pc_y, player_1_x, player_1_y, bola_x, bola_y, score_pc, score_player_1, velocidade_bola_x, velocidade_bola_y
 
     # Posição da Raquete do pc
     pc_x = 10
@@ -87,6 +91,8 @@ def posicao_inicial():
     score_player_1 = 0
     score_pc = 0
 
+    # Definir velocidade inicial aleatória para a bola
+    alterar_direcao_bola('')
 
 def fim_jogo():
     global rodando, vencedor, controle
@@ -99,7 +105,6 @@ def fim_jogo():
                 if event.key == pygame.K_SPACE:
                     controle = True
                     posicao_inicial()
-
                     return
         # Renderiza o texto do menu
         screen.fill(PRETO)
@@ -109,6 +114,25 @@ def fim_jogo():
 
         pygame.display.flip()
 
+
+def alterar_direcao_bola(eixo):
+    global velocidade_bola_x, velocidade_bola_y
+    if velocidade_bola_x == 0:
+        velocidade_bola_x = velocidade_geral
+    elif velocidade_bola_y == 0:
+        velocidade_bola_y = velocidade_geral
+
+    if eixo == 'x':
+        velocidade_bola_x = velocidade_bola_x * -1
+        velocidade_bola_y = velocidade_bola_y * random.choice([1, -1])
+    elif eixo == 'y':
+        velocidade_bola_x = velocidade_bola_x * random.choice([1, -1])
+        velocidade_bola_y = velocidade_bola_y * -1
+    else:
+        velocidade_bola_x = velocidade_bola_x * random.choice([1, -1])
+        velocidade_bola_y = velocidade_bola_y * random.choice([1, -1])
+    print(f'v_bola ',velocidade_bola_x, velocidade_bola_y)
+    print(f'random: ',random.choice([1, -1]))
 
 menu_principal()
 posicao_inicial()
@@ -138,17 +162,17 @@ while rodando:
         if bola_rect.colliderect(raquete_pc_rect) or bola_rect.colliderect(
             raquete_player_1_rect
         ):
-            velocidade_bola_x = -velocidade_bola_x
+            alterar_direcao_bola('x')
 
         # Colisão da bola com as bordas da tela
         if bola_y <= 0 or bola_y >= altura - tamanho_bola:
-            velocidade_bola_y = -velocidade_bola_y
+            alterar_direcao_bola('y')
 
         # Posicionar a bola no inicio do jogo
         if bola_x <= 0:
             bola_x = largura // 2 - tamanho_bola // 2
             bola_y = altura // 2 - tamanho_bola // 2
-            velocidade_bola_x = -velocidade_bola_x
+            alterar_direcao_bola('')
             score_player_1 += 1
             print(f"Score Player_1: {score_player_1}")
             if score_player_1 == 5:
@@ -159,7 +183,7 @@ while rodando:
         if bola_x >= largura - tamanho_bola:
             bola_x = largura // 2 - tamanho_bola // 2
             bola_y = altura // 2 - tamanho_bola // 2
-            velocidade_bola_x = -velocidade_bola_x
+            alterar_direcao_bola('')
             score_pc += 1
             print(f"Score PC: {score_pc}")
             if score_pc == 5:
