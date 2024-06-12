@@ -48,6 +48,13 @@ clock = pygame.time.Clock()
 opacidade_bola = 255
 start_ticks = pygame.time.get_ticks()  # Tempo inicial
 
+# Controle de piscada
+piscando = False
+tempo_piscando = 1000  # tempo em milissegundos
+ultimo_tempo_piscada = pygame.time.get_ticks()
+tempo_visivel = 500
+tempo_invisivel = 500
+
 def menu_principal():
     global rodando, controle
     while True:
@@ -77,7 +84,7 @@ def menu_principal():
 
 
 def posicao_inicial():
-    global pc_x, pc_y, player_1_x, player_1_y, bola_x, bola_y, score_pc, score_player_1, velocidade_bola_x, velocidade_bola_y, cor_bola, opacidade_bola
+    global pc_x, pc_y, player_1_x, player_1_y, bola_x, bola_y, score_pc, score_player_1, velocidade_bola_x, velocidade_bola_y, cor_bola, opacidade_bola, tempo_piscando, tempo_visivel, tempo_invisivel
 
     # Posição da Raquete do pc
     pc_x = 10
@@ -102,6 +109,10 @@ def posicao_inicial():
     # Define a velocidade inicial da bola
     alterar_direcao_bola('')
 
+    # Resetar o controle de piscada
+    tempo_piscando = 1000
+    tempo_visivel = 500
+    tempo_invisivel = 500
 
 def fim_jogo():
     global rodando, vencedor, controle
@@ -167,9 +178,17 @@ while rodando:
             velocidade_bola_y += 0.1 if velocidade_bola_y > 0 else -0.1
             start_ticks = pygame.time.get_ticks()  
 
-        # Diminuição da opacidade da bola
-        opacidade_bola = max(0, opacidade_bola - 0.1)
-        bola_cor_transparente = (cor_bola[0], cor_bola[1], cor_bola[2], int(opacidade_bola))
+        # Piscando a bola
+        tempo_atual = pygame.time.get_ticks()
+        if tempo_atual - ultimo_tempo_piscada >= tempo_piscando:
+            piscando = not piscando
+            ultimo_tempo_piscada = tempo_atual
+            if piscando:
+                tempo_piscando = tempo_invisivel
+                tempo_invisivel = max(100, tempo_invisivel - 50)
+            else:
+                tempo_piscando = tempo_visivel
+                tempo_visivel = max(100, tempo_visivel - 50)
 
         # Retângulos de Colisão
         bola_rect = pygame.Rect(bola_x, bola_y, tamanho_bola, tamanho_bola)
@@ -238,12 +257,13 @@ while rodando:
             screen, BRANCO, (player_1_x, player_1_y, raquete_largura, raquete_altura)
         )
         
-        # Criar uma superfície para a bola com transparência
-        bola_surface = pygame.Surface((tamanho_bola, tamanho_bola), pygame.SRCALPHA)
-        pygame.draw.ellipse(
-            bola_surface, bola_cor_transparente, (0, 0, tamanho_bola, tamanho_bola)
-        )
-        screen.blit(bola_surface, (bola_x, bola_y))
+        if not piscando:
+            # Criar uma superfície para a bola com transparência
+            bola_surface = pygame.Surface((tamanho_bola, tamanho_bola), pygame.SRCALPHA)
+            pygame.draw.ellipse(
+                bola_surface, (cor_bola[0], cor_bola[1], cor_bola[2], opacidade_bola), (0, 0, tamanho_bola, tamanho_bola)
+            )
+            screen.blit(bola_surface, (bola_x, bola_y))
         
         pygame.draw.aaline(screen, BRANCO, (largura // 2, 0), (largura // 2, altura))
 
